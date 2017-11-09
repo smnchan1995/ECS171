@@ -12,22 +12,22 @@ RUN apt-key adv --keyserver pgp.mit.edu --recv D101F7899D41F3C3 \
 # Install node-gyp
 RUN npm install -g node-gyp
 
-# Copy the current directory to the client directory.
-COPY ./public /client
-COPY ./src /client
+# Copy the needed files to the base_dir directory. COPY does not behave like CLI cp: you need to specify a directory to create.
+COPY ./public/ /base_dir/public/
+COPY ./src/ /base_dir/src/
+COPY ./package.json /base_dir/
 
-# Set the working directory to the client directory.
-WORKDIR /client
+# Set the working directory to the base_dir directory.
+WORKDIR /base_dir/
+
+# Make the temporary image build directory.
+RUN mkdir -p image_build_dir
+
+# Remove the contents of the directory, if they exist.
+RUN rm -rf image_build_dir/*
 
 # Run yarn install: install the app.
 RUN yarn install
 
 # Run yarn build: generate the /build/ folder.
 RUN yarn build
-
-# Expose port 3000.
-# EXPOSE 3000
-
-# Run the app.
-# CMD ["mkdir", "-p", "image_build_dir"]
-# CMD ["mv", "build/*", "image_build_dir"]

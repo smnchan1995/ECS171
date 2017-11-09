@@ -1,17 +1,17 @@
 #!/bin/sh
 cd ../se/frontend/app/ # cd to the base directory.
-echo 1
-
-mkdir -p build # Make the build directory locally.
-echo 2
-
-rm -rf build/* # Remove the build directory contents if they exist.
-echo 3
-
+mkdir -p build/ # Make the build directory if it doesn't exist.
+rm -rf build/* # Remove the directory contents if they do exist.
 # The below command assumes docker accessed via the command 'docker', and not 'sudo docker'.
 docker build -t joke_front_end_docker_image . # Build the Docker image from the local Dockerfile.
-echo 4
-
 # Run the Docker image. All this does is copy the build files in the Docker image to the mapped volume.
-docker run -v build:/image_build_dir/ joke_front_end_docker_image # image_build_dir is the temporary directory in Docker that is used to copy the build files.
-echo 5
+docker run -v `pwd`/build:/base_dir/image_build_dir/ joke_front_end_docker_image bash -c 'cp -r build/* image_build_dir'
+mv build ../../backend/app/ # Move the static file to the backend directory.
+cd ../../backend/app/ # Move to the Flask base directory.
+cd build/static # Go into build's static directory.
+mv js .. # Copy the js directory to the build base directory.
+mv css .. # Copy the css directory to the build base directory.
+cd ../.. # Go back to the Flask base directory.
+mv build static # Change the name of the directory from build to static (Flask reads a directory named static by default).
+docker build -t joke_back_end_docker_image . # Build the back end docker image.
+exit 0 # Exit with no error.
