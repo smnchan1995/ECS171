@@ -1,0 +1,5 @@
+#!/bin/sh
+cd ../se/frontend/app/ # cd to the base directory.
+rm -rf node_modules/ # Remove the node_modules folder for a clean install.
+rm -rf .yarnclean # Remove the .yarnclean log, because it prevents yarn build from completing.
+rm -rf build/ # Remove the old build folder so the newly installed can be copied from the Docker image.

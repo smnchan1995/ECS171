@@ -1,13 +1,13 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort
 from random import randint
- 
+
 app = Flask(__name__)
- 
-@app.route("/")
-def index():
-    return render_template(
-    'index.html',**locals())
- 
+
+# @app.route("/")
+# def index():
+#     return render_template(
+#     'index.html',**locals())
+
 @app.route("/starwars/<string:location>/")
 def colors(location):
     if location == "low":
@@ -20,6 +20,10 @@ def colors(location):
         imageSource = "http://i.imgur.com/nMoSrfz.jpg"
     return render_template(
     'main.html',**locals())
- 
+
+@app.route('/')
+def root():
+    return app.send_static_file('index.html')
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0')

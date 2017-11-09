@@ -1,0 +1,17 @@
+#!/bin/sh
+cd ../se/frontend/app/ # cd to the base directory.
+echo 1
+
+mkdir -p build # Make the build directory locally.
+echo 2
+
+rm -rf build/* # Remove the build directory contents if they exist.
+echo 3
+
+# The below command assumes docker accessed via the command 'docker', and not 'sudo docker'.
+docker build -t joke_front_end_docker_image . # Build the Docker image from the local Dockerfile.
+echo 4
+
+# Run the Docker image. All this does is copy the build files in the Docker image to the mapped volume.
+docker run -v build:/image_build_dir/ joke_front_end_docker_image # image_build_dir is the temporary directory in Docker that is used to copy the build files.
+echo 5
