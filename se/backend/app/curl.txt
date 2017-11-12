@@ -1,0 +1,2 @@
+curl -H "Content-Type: application/json" -X POST -d '{"username":"Blue Team"}' http://0.0.0.0:5000/ping
+curl -i 0.0.0.0:5000/test
