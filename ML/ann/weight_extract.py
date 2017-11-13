@@ -13,15 +13,12 @@ def get_weights(model):
             file_obj.write("     L:%d N:%d" % (layer+1,next_node_num))
             next_node_num += 1
         file_obj.write("\n")
-        #Print weights
-        weight_type = 0
         #First print node weights
-        if weight_type == 0:
-            for node in range(0,len(layer_weights[0])):
-                file_obj.write("L:%d N:%d: " % (layer,node))
-                for node_weight in layer_weights[0][node]:
-                    file_obj.write("  % 6.5f  " % node_weight)
-                file_obj.write("\n")
+        for node in range(0,len(layer_weights[0])):
+            file_obj.write("L:%d N:%d: " % (layer,node))
+            for node_weight in layer_weights[0][node]:
+                file_obj.write("  % 6.5f  " % node_weight)
+            file_obj.write("\n")
         #Next print bias weights
         file_obj.write("\nL:%d Bias: " % (layer+1))
         for node in layer_weights[1]:
