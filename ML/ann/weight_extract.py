@@ -1,17 +1,23 @@
+import numpy as np
+from keras.models import Sequential
+
 #Extract weights from model and store in file in easily readable format and return file object
 def get_weights(model):
+    #Check if model is Sequential Keras model
+    if type(model) != type(Sequential()):
+        print("Error: get_weights:")
+        print("Input must be of type keras.model.Sequential() not: %s" % type(model))
+        exit()
     #Create New Text File with Weights and erase any existing file with same name
     file_obj = open("model weights","w")
     file_obj.write("Formatted Output:\n\n")
     #Output formatted data for easy visual analysis
     for layer in range(0,len(model.layers)):
-        file_obj.write("Layer %d -> Layer %d Weights:\n\t   " % (layer, layer+1))
+        file_obj.write("Layer %d -> Layer %d Weights:\n       " % (layer, layer+1))
         layer_weights = model.layers[layer].get_weights()
         #Print top labels
-        next_node_num = 0
         for next_layer_node_num in range(0,len(layer_weights[0][0])):
-            file_obj.write("     L:%d N:%d" % (layer+1,next_node_num))
-            next_node_num += 1
+            file_obj.write("     L:%d N:%d" % (layer+1,next_layer_node_num))
         file_obj.write("\n")
         #First print node weights
         for node in range(0,len(layer_weights[0])):
@@ -20,7 +26,7 @@ def get_weights(model):
                 file_obj.write("  % 6.5f  " % node_weight)
             file_obj.write("\n")
         #Next print bias weights
-        file_obj.write("\nL:%d Bias: " % (layer+1))
+        file_obj.write("\nL:%d Bias:" % (layer+1))
         for node in layer_weights[1]:
             file_obj.write("  % 6.5f  " % node)
         file_obj.write("\n\n")
@@ -28,7 +34,6 @@ def get_weights(model):
     file_obj.write("\n\nUnformatted Output for Parsing:\nz")
     for layer in range(0,len(model.layers)):
         weight_layer = model.layers[layer].get_weights()
-        print(weight_layer)
         #First Take Care of node weights
         for node_list in range(0,len(weight_layer[0])):
             for node in range(0,len(weight_layer[0][node_list])):
@@ -50,11 +55,22 @@ def get_weights(model):
 
 #Extract weights from file object and set model weights and returns updated model
 def set_weights(fileobj,model):
-    start_parsing = False
+    #Check if model is Sequential Keras model
+    if type(model) != type(Sequential()):
+        print("Error: set_weights:")
+        print("Input must be of type keras.model.Sequential() not: %s" % type(model))
+        exit()
+    #Seperate unformatted data from other data
+    raw_data = fileobj.read().split("z")
+    #Check data split format
+    if len(raw_data) != len(model.layers)*2+1:
+        print("Error: set_weights:")
+        print("fileobj data is not in correct format for parsing")
+        exit()
     parse_list = []
     temp_list = []
     weight_type = 0
-    for line in fileobj.read().split("z")[1:]:
+    for line in raw_data[1:]:
         #Take care of node weights first
         if weight_type == 0:
             node_temp = []
