@@ -1,7 +1,23 @@
+import os
+
 from flask import Flask, flash, redirect, render_template, request, session, abort
 from random import randint
+from flask_sqlalchemy import SQLAlchemy
+
+import dbaccess
  
 app = Flask(__name__)
+app.config.from_pyfile("settings.cfg")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://%s:%s@%s:%s/%s" % (app.config['DB_USER'],
+	app.config['DB_PASS'], app.config['DB_HOST'], app.config['DB_PORT'], app.config['DB_NAME'])
+
+
+db = SQLAlchemy(app)
+
+Joke = dbaccess.buildJokeModel(db)
+JokeRater = dbaccess.buildJokeRaterModel(db)
+JokeRating = dbaccess.buildJokeRatingModel(db)
  
 @app.route("/")
 def index():
@@ -22,4 +38,4 @@ def colors(location):
     'main.html',**locals())
  
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=8080)
