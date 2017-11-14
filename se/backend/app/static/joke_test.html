@@ -5,7 +5,7 @@
 
 <script>
      const http = new XMLHttpRequest()
-     http.open("GET", "http://localhost:5000/get_joke")
+     http.open("GET", "http://127.0.0.1:5000/get_joke")
      http.send()
      http.onload = () => document.getElementById("p1").innerHTML = http.responseText;
 </script>
