@@ -39,7 +39,12 @@ class User:
 def sample_jokes(jokes, n=5):
     """
     Right now our sampling procedure is to pick a random sample from the jokes
-    """
+    """   
+    categories = list(jokes['category'].unique())
+
+    for i in range(len(categories)):
+        temp =  jokes[jokes['category'] == categories[i]]
+        print(temp.sample(n=1).index)
 
     return random.sample(jokes.index.tolist(), n)
 
@@ -106,7 +111,7 @@ def main(argv=None):
         7. Use these to suggest new jokes
     """
     joke_raters, joke_ratings, jokes = user.read_clean_data()
-
+    
     ratings_matrix = joke_ratings.values
     new_user = user.read_user()
     joke_ids = sample_jokes(jokes)
