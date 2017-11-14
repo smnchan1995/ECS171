@@ -111,9 +111,11 @@ def main(argv=None):
         7. Use these to suggest new jokes
     """
     joke_raters, joke_ratings, jokes = user.read_clean_data()
-    
+
     ratings_matrix = joke_ratings.values
+
     new_user = user.read_user()
+    
     joke_ids = sample_jokes(jokes)
 
     joke_ratings = joke_ratings.append(pd.Series([np.nan]*len(joke_ratings.columns),
