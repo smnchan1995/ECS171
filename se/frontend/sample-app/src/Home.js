@@ -9,7 +9,7 @@ class Home extends Component {
 			<h2> Welcome to the Blue Teams ComAIdian App </h2>
 			
 			<p>
-			Use the tabs to the upper left to navigate through the webpage.
+			Use the tabs to the upper right to navigate through the webpage.
 			</p>
 		</div>
 	  );
