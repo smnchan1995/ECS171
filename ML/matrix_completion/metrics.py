@@ -28,15 +28,59 @@ def mean_square_error(actuals, predicteds):
 
 
 class Tester:
+    """
+    This class will encapsulate all the information needed for running the
+    matrix completion algorithm to predict ratings, and will offer utilities
+    for testing out the success of the various methods.
+
+    To this end, it will internally store information regarding the three
+    steps that might vary in the method:
+        1. Sampling the jokes to recommend to the user
+        2. Constructing the matrix to be completed
+        3. The specific matrix completion algorithm
+
+    These will be specified in the arguments to the constructor.
+    To make this class as flexible as possible, these arguments can be strings
+    specifying certain specific methods (right now this is just 'simple'), but
+    they can also be functions of the three dataframes (rater, rating, jokes).
+
+    For an example, here is how one might define a sampler for this class
+        def sampler(rater, rating, jokes):
+            '''
+            This will sample jokes only from the sports column.
+            It will return the indices of the jokes.
+            '''
+            return list(jokes[jokes['category'] == 'Sports'].index)
+    The sampler should return a list of the joke indices.
+
+    The matrix constructor can be a function as well.
+    It will accept the rater, rating, and joke dataframes, but return a
+    subframe of the rating dataframe.
+    Here is an example:
+        def picker(rater, rating, jokes):
+            '''
+            This will return the subframe of the ratings dataframe of the
+            users who like Programming jokes.
+            '''
+            genre_mask = rater['preferred_joke_genre'] == 'Programming'
+            genre_mask2 = rater['preferred_joke_genre2'] == 'Programming'
+            return rating[genre_mask | genre_mask2]
+
+    The completer argument will be a string specifying the desired
+    matrix completion algorithms.
+    """
     def __init__(self, sampler='simple', matrix_picker='simple',
                  completer='mean'):
         self.sampler = sampler
         self.picker = matrix_picker
         self.completer = completer
 
-    def test(self, matrix):
+    def generate(self, raters, ratings, jokes):
+        ratings_matrix = ratings.values
+        m, n = ratings_matrix.values
+
+
         chosen_submatrix = self.pick(matrix)
-        m, n = chosen_submatrix.shape
         row_index = random.choice(list(range(m))
 
         # These are the indices of the columns we'll keep.
@@ -57,18 +101,21 @@ class Tester:
         self.mse = mean_square_error(actual_row, predicted_row)
         self.print_report()
 
-    def sample(self, matrix):
-        m, n = matrix.shape
+    def sample(self, raters, ratings, jokes):
+
         if self.sampler == 'simple':
-            return random.sample(list(range(matrix.shape[1])), 5)
+            return random.sample(jokes.index.tolist(), 5)
+        elif callable(self.sampler):
+            return self.sampler(raters, ratings, jokes)
         else:
             print("Alternative methods not implemented yet")
             raise NotImplementedError
 
-    def pick(self, matrix):
-        m, n = matrix.shape
+    def pick(self, raters, ratings, jokes):
         if self.picker == 'simple':
-            return matrix
+            return ratings
+        elif callable(self.picker):
+            return self.picker(raters, ratings, jokes)
         else:
             print("Alternative methods not implemented yet")
             raise NotImplementedError
