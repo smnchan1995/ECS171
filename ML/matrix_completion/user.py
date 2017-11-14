@@ -3,6 +3,8 @@ user.py
 
 This should include basic information about users
 """
+
+from forms import IntegerField, CategoricalField
 from matrix_complete import read_clean_data
 
 joke_raters, _, _ = read_clean_data()
@@ -39,4 +41,4 @@ def read_user():
     This function will prompt the user for input about all the user
     parameterizations.
     """
-    return [field.prompt() for field in all_user_fields]
+    return [field.read_input() for field in all_user_fields]
