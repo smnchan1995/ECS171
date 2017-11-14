@@ -1,0 +1,14 @@
+<html>
+<body>
+
+<p id="p1">Hello World!</p>
+
+<script>
+     const http = new XMLHttpRequest()
+     http.open("GET", "http://localhost:5000/get_joke")
+     http.send()
+     http.onload = () => document.getElementById("p1").innerHTML = http.responseText;
+</script>
+
+</body>
+</html>
