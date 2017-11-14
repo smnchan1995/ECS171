@@ -96,7 +96,7 @@ def complete_matrix(matrix, method):
             missing entries
         method (str): One of 'mean', 'median', 'soft_impute', 'iterativeSVD',
             'MICE', 'matrix_factorization', 'nuclear_norm_minimization',
-            'biscaler', 'KNN', 'gauss'
+            'KNN', 'gauss'
     Returns:
         np.array: The completed matrix
     """
@@ -106,6 +106,22 @@ def complete_matrix(matrix, method):
         imputer = fancyimputer.SimpleFill('median')
     elif method == 'gauss':
         imputer = fancyimputer.SimpleFill('random')
+    elif method == 'soft_impute':
+        imputer = fancyimputer.SoftImpute()
+    elif method == 'iterativeSVD':
+        imputer = fancyimputer.IterativeSVD()
+    elif method == 'MICE':
+        imputer = MICE()
+    elif method == 'matrix_factorization':
+        imputer = MatrixFactorization()
+    elif method == 'nuclear_norm_minimization':
+        imputer = NuclearNormMinimization()
+    elif method == 'KNN':
+        imputer = KNN()
+    else:
+        raise ValueError("Unrecognized method passed in")
+
+    return imputer.complete(matrix)
 
 
 def main(argv=None):
@@ -121,7 +137,7 @@ def main(argv=None):
     """
     joke_raters, joke_ratings, jokes = read_clean_data()
     ratings_matrix = joke_ratings.values
-    user = user.read_user()
+    new_user = user.read_user()
     joke_ids = sample_jokes(jokes)
 
     joke_ratings = joke_ratings.append(pd.Series([np.nan]*len(joke_ratings.columns),
